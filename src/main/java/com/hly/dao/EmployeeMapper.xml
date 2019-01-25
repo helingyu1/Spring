@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hly.dao.EmployeeMapper">
+
+    <select id="getEmpById" resultType="com.hly.entity.Employee">
+        select * from tbl_employee where id = #{id}
+    </select>
+
+    <insert id="insertEmployee" parameterType="com.hly.entity.Employee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_employee VALUES (null, #{name}, #{gender},#{email})
+    </insert>
+
+    <update id="updateEmployee" parameterType="com.hly.entity.Employee">
+        UPDATE tbl_employee SET name=#{name}, gender=#{gender}, email=#{email} where id=#{id}
+    </update>
+
+    <delete id="deleteEmployee">
+        DELETE FROM tbl_employee where id=#{id}
+    </delete>
+
+    <select id="getEmpByNameAndGender" resultType="com.hly.entity.Employee">
+        SELECT * FROM tbl_employee WHERE name LIKE #{name} and gender=#{gender}
+    </select>
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="mysql">
+        <environment id="mysql">
+            <!-- 此处的JDBC、POOL等都是被框架设置别名的 -->
+            <!-- 之后会交给spring framework管理 -->
+            <transactionManager type="JDBC"></transactionManager>
+            <!-- 之后会交给spring framework管理 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"></property>
+                <property name="url" value="jdbc:mysql://47.107.131.139:3306/test"></property>
+                <property name="username" value="root"></property>
+                <property name="password" value="123456"></property>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper class="com.hly.dao.EmployeeMapper"></mapper>
+    </mappers>
+</configuration>
