@@ -3,6 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"></setting>
+    </settings>
     <environments default="mysql">
         <environment id="mysql">
             <!-- 此处的JDBC、POOL等都是被框架设置别名的 -->
@@ -19,5 +23,8 @@
     </environments>
     <mappers>
         <mapper class="com.hly.dao.EmployeeMapper"></mapper>
+        <mapper class="com.hly.dao.EmployeeDeptMapper"></mapper>
+        <mapper class="com.hly.dao.DepartmentMapper"></mapper>
+        <mapper class="com.hly.dao.EmployeeConditionMapper"></mapper>
     </mappers>
 </configuration>

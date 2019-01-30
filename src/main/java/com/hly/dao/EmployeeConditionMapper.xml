@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hly.dao.EmployeeConditionMapper">
+
+    <select id="getEmployeeByConditionIf" resultType="com.hly.entity.Employee">
+        SELECT *
+        FROM tbl_employee
+        <where>
+            <!--<if test="id!=null">-->
+                <!--id=#{id}-->
+            <!--</if>-->
+            <if test="name!=null">
+                and name=#{name}
+            </if>
+            <if test="email!=null">
+                and email=#{email}
+            </if>
+            <if test="gender!=null">
+                and gender=#{gender}
+            </if>
+        </where>
+    </select>
+
+    <select id="getEmployeeByConditionChoose" resultType="com.hly.entity.Employee">
+        SELECT *
+        FROM tbl_employee
+        WHERE 
+        <choose>
+            <when test="name!=null">
+                name like #{name}
+            </when>
+            <when test="email!=null">
+                <bind name="pattern" value="'%'+ _parameter.getEmail() +'%'"></bind>
+                email like #{pattern}
+            </when>
+            <when test="gender!=null">
+                gender like #{gender}
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+    </select>
+
+    <update id="updateEmployeeById">
+        UPDATE tbl_employee
+        <set>
+            <if test="name!=null">
+                name=#{name},
+            </if>
+            <if test="email!=null">
+                email=#{email},
+            </if>
+            <if test="gender!=null">
+                gender=#{gender}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <select id="getEmpsInIds" resultType="com.hly.entity.Employee">
+        SELECT *
+        FROM tbl_employee
+        WHERE id IN
+        <foreach collection="list" item="item" index="index"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="batchAddEmps">
+        INSERT INTO tbl_employee VALUES
+        <foreach collection="list" item="emp" separator=",">
+            (null, #{emp.name},#{emp.gender},#{emp.email},#{emp.department.id})
+        </foreach>
+    </insert>
+
+</mapper>

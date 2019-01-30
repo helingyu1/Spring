@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hly.dao.DepartmentMapper">
+    <select id="getDeptById" resultType="com.hly.entity.Department">
+        SELECT id id, department_name departmentName FROM tbl_department where id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hly.dao.EmployeeDeptMapper">
+
+    <!-- 第一种：利用resultMap进行级联查询，不使用association标签-->
+    <resultMap id="employeeDept0" type="com.hly.entity.Employee">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="gender" property="gender"></result>
+        <result column="email" property="email"></result>
+        <result column="departmentId" property="department.id"></result>
+        <result column="departmentName" property="department.departmentName"></result>
+    </resultMap>
+
+    <!-- 第二种：利用resultMap进行级联查询，使用association标签 -->
+    <resultMap id="employeeDept" type="com.hly.entity.Employee">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="gender" property="gender"></result>
+        <result column="email" property="email"></result>
+        <association property="department" javaType="com.hly.entity.Department">
+            <id column="departmentId" property="id"></id>
+            <result column="departmentName" property="departmentName"></result>
+        </association>
+    </resultMap>
+
+    <!-- 第三种：利用resultMap进行分步查询 -->
+    <resultMap id="employeeByStep" type="com.hly.entity.Employee">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="gender" property="gender"></result>
+        <result column="email" property="email"></result>
+        <association property="department" select="com.hly.dao.DepartmentMapper.getDeptById" column="d_id">
+            <id column="id" property="id"></id>
+            <result column="department_name" property="departmentName"></result>
+        </association>
+    </resultMap>
+
+    <select id="getEmployeeWithDeptById0" resultMap="employeeDept0">
+        select e.id id, e.name name, e.gender gender, e.email email, e.d_id departmentId, d.department_name departmentName
+        from tbl_employee e, tbl_department d
+        where d.id=e.d_id and e.id=#{id}
+    </select>
+
+    <select id="getEmployeeWithDeptById" resultMap="employeeDept">
+        select e.id id, e.name name, e.gender gender, e.email email, e.d_id departmentId, d.department_name departmentName
+        from tbl_employee e, tbl_department d
+        where d.id=e.d_id and e.id=#{id}
+    </select>
+
+    <select id="getEmpByStep" resultMap="employeeByStep">
+        SELECT id,name,gender,email,d_id FROM tbl_employee where id=#{id}
+    </select>
+</mapper>

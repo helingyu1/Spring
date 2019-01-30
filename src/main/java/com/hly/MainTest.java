@@ -1,6 +1,9 @@
 package com.hly;
 
+import com.hly.dao.EmployeeConditionMapper;
+import com.hly.dao.EmployeeDeptMapper;
 import com.hly.dao.EmployeeMapper;
+import com.hly.entity.Department;
 import com.hly.entity.Employee;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainTest {
@@ -104,6 +108,161 @@ public class MainTest {
         }catch(Exception e){
             e.printStackTrace();
         }finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testAssociation0(){
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = getSession();
+            EmployeeDeptMapper employeeMapper = sqlSession.getMapper(EmployeeDeptMapper.class);
+            Employee e = employeeMapper.getEmployeeWithDeptById0(4);
+            System.out.println(e);
+            System.out.println(e.getDepartment());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testAssociation(){
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = getSession();
+            EmployeeDeptMapper employeeMapper = sqlSession.getMapper(EmployeeDeptMapper.class);
+            Employee e = employeeMapper.getEmployeeWithDeptById(4);
+            System.out.println(e);
+            System.out.println(e.getDepartment());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testAssociationByStep(){
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = getSession();
+            EmployeeDeptMapper employeeMapper = sqlSession.getMapper(EmployeeDeptMapper.class);
+            Employee e = employeeMapper.getEmpByStep(1);
+            System.out.println(e.getName());
+            //System.out.println(e.getDepartment().getDepartmentName());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testConditionIf() {
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = getSession();
+            Employee e = new Employee();
+            //e.setId(1);
+            e.setName(null);
+            e.setEmail("aaa@webank.com");
+            e.setGender("1");
+            EmployeeConditionMapper employeeConditionMapper = sqlSession.getMapper(EmployeeConditionMapper.class);
+            List<Employee> emps = employeeConditionMapper.getEmployeeByConditionIf(e);
+            for (Employee emp : emps) {
+                System.out.println(emp.getName());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testConditionChoose(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            Employee e = new Employee();
+            //e.setId(1);
+            e.setName(null);
+            e.setEmail("@");
+            e.setGender(null);
+            EmployeeConditionMapper employeeConditionMapper = sqlSession.getMapper(EmployeeConditionMapper.class);
+            List<Employee> emps = employeeConditionMapper.getEmployeeByConditionChoose(e);
+            for (Employee emp : emps) {
+                System.out.println(emp.getName());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testConditionSet(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            Employee e = new Employee();
+            e.setId(1);
+            e.setName("何凌宇");
+            e.setEmail("hhh@163.com");
+            e.setGender("2");
+            EmployeeConditionMapper employeeConditionMapper = sqlSession.getMapper(EmployeeConditionMapper.class);
+            Integer ret = employeeConditionMapper.updateEmployeeById(e);
+            System.out.println(ret);
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testConditionForeach(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(1);
+            list.add(2);
+            list.add(3);
+            list.add(4);
+            EmployeeConditionMapper employeeConditionMapper = sqlSession.getMapper(EmployeeConditionMapper.class);
+            List<Employee> emps = employeeConditionMapper.getEmpsInIds(list);
+            for (Employee e: emps) {
+                System.out.println(e);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testConditionForeachForAdd(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            List<Employee> list = new ArrayList<Employee>();
+            Employee e1 = new Employee("test1","1","aaa@163.com", new Department(1));
+            Employee e2 = new Employee("test2","0","bbb@163.com", new Department(1));
+            EmployeeConditionMapper employeeConditionMapper = sqlSession.getMapper(EmployeeConditionMapper.class);
+            list.add(e1);
+            list.add(e2);
+            employeeConditionMapper.batchAddEmps(list);
+            sqlSession.commit();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally{
             sqlSession.close();
         }
     }
