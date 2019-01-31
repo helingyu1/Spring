@@ -1,5 +1,6 @@
 package com.hly;
 
+import com.hly.dao.CacheMapper;
 import com.hly.dao.EmployeeConditionMapper;
 import com.hly.dao.EmployeeDeptMapper;
 import com.hly.dao.EmployeeMapper;
@@ -18,11 +19,26 @@ import java.util.List;
 
 public class MainTest {
 
+    SqlSessionFactory sqlSessionFactory = null;
+
+    /**
+     * 这种写法在多线程下调用是有问题的
+     * @return
+     * @throws IOException
+     */
+    public SqlSessionFactory initFactory() throws IOException{
+        if(sqlSessionFactory == null){
+            String resource = "mybatis-config.xml";
+            InputStream inputStream = Resources.getResourceAsStream(resource);
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        }
+        return sqlSessionFactory;
+    }
+
     public SqlSession getSession() throws IOException {
-        String resource = "mybatis-config.xml";
-        InputStream inputStream = Resources.getResourceAsStream(resource);
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-        return sqlSessionFactory.openSession();
+        initFactory();
+        System.out.println(sqlSessionFactory);
+        return this.sqlSessionFactory.openSession();
     }
 
     @Test
@@ -266,4 +282,135 @@ public class MainTest {
             sqlSession.close();
         }
     }
+
+    @Test
+    public void testFirstLevelCache(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+            Employee e1 = mapper.testFirstLevelCache(1);
+            System.out.println("第一次查询完毕");
+            Employee e2 = mapper.testFirstLevelCache(1);
+            System.out.println("第二次查询完毕");
+            boolean b = (e1 == e2);
+            System.out.println("e1与e2是否相等：" + b);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testSecondLevelCache(){
+        SqlSession sqlSession = null;
+        SqlSession sqlSession2 = null;
+        try{
+            sqlSession = getSession();
+            sqlSession2 = getSession();
+            CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+            Employee e1 = mapper.testFirstLevelCache(1); // 方法名懒得改了
+            System.out.println("查询1完成");
+
+            sqlSession.close();
+
+            CacheMapper mapper2 = sqlSession2.getMapper(CacheMapper.class);
+            Employee e2 = mapper2.testFirstLevelCache(1);
+            System.out.println("查询2完成");
+            boolean b = (e1 == e2);
+            System.out.println("e1与e2是否相等：" + b);
+        } catch(Exception e){
+            e.printStackTrace();
+        } finally {
+          sqlSession2.close();
+        }
+    }
+
+
+    @Test
+    public void testFirstLevelCacheFailed01(){
+        SqlSession sqlSession = null;
+        SqlSession sqlSession2 = null;
+        try{
+            sqlSession = getSession();
+            sqlSession2 = getSession();
+            CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+            CacheMapper mapper2 = sqlSession2.getMapper(CacheMapper.class);
+            Employee e1 = mapper.testFirstLevelCache(1);
+            System.out.println("会话1查询完毕");
+            Employee e2 = mapper2.testFirstLevelCache(1);
+            System.out.println("会话2查询完毕");
+            boolean b = (e1 == e2);
+            System.out.println("e1与e2是否相等：" + b);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+            sqlSession2.close();
+        }
+    }
+
+    @Test
+    public void testFirstLevelCacheFailed02(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+            Employee e1 = mapper.testFirstLevelCache(1);
+            System.out.println("会话1查询完毕");
+            Employee e2 = mapper.testFirstLevelCache(2);
+            System.out.println("会话2查询完毕");
+            boolean b = (e1 == e2);
+            System.out.println("e1与e2是否相等：" + b);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testFirstLevelCacheFailed03(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+            Employee e1 = mapper.testFirstLevelCache(1);
+            System.out.println("会话1查询完毕");
+            e1.setName("修改用户名");
+            mapper.updateEmp(e1);
+            System.out.println("修改完毕");
+            Employee e2 = mapper.testFirstLevelCache(2);
+            System.out.println("会话2查询完毕");
+            boolean b = (e1 == e2);
+            System.out.println("e1与e2是否相等：" + b);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testFirstLevelCacheFailed04(){
+        SqlSession sqlSession = null;
+        try{
+            sqlSession = getSession();
+            CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+            Employee e1 = mapper.testFirstLevelCache(1);
+            System.out.println("会话1查询完毕");
+            sqlSession.clearCache();
+            System.out.println("缓存clear完毕");
+            Employee e2 = mapper.testFirstLevelCache(2);
+            System.out.println("会话2查询完毕");
+            boolean b = (e1 == e2);
+            System.out.println("e1与e2是否相等：" + b);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sqlSession.close();
+        }
+    }
+
 }

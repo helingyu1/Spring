@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <settings>
+        <setting name="cacheEnabled" value="true"></setting>
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="aggressiveLazyLoading" value="false"></setting>
     </settings>
@@ -26,5 +27,6 @@
         <mapper class="com.hly.dao.EmployeeDeptMapper"></mapper>
         <mapper class="com.hly.dao.DepartmentMapper"></mapper>
         <mapper class="com.hly.dao.EmployeeConditionMapper"></mapper>
+        <mapper class="com.hly.dao.CacheMapper"></mapper>
     </mappers>
 </configuration>
