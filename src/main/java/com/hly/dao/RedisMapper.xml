@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.hly.dao.EhcacheMapper">
-    <!--<cache type="org.mybatis.caches.ehcache.EhcacheCache"></cache>-->
-    <select id="testEhcache" resultType="com.hly.entity.Employee" useCache="true">
+<mapper namespace="com.hly.dao.RedisMapper">
+    <cache type="org.mybatis.caches.redis.RedisCache"></cache>
+    <select id="testRedisCache" resultType="com.hly.entity.Employee" useCache="true">
         SELECT * FROM tbl_employee where id=#{id}
     </select>
 </mapper>

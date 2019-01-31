@@ -30,5 +30,6 @@
         <mapper class="com.hly.dao.EmployeeConditionMapper"></mapper>
         <mapper class="com.hly.dao.CacheMapper"></mapper>
         <mapper class="com.hly.dao.EhcacheMapper"></mapper>
+        <mapper class="com.hly.dao.RedisMapper"></mapper>
     </mappers>
 </configuration>
