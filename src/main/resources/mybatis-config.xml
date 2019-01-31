@@ -7,6 +7,7 @@
         <setting name="cacheEnabled" value="true"></setting>
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="aggressiveLazyLoading" value="false"></setting>
+        <setting name="logImpl" value="LOG4J"/>
     </settings>
     <environments default="mysql">
         <environment id="mysql">
@@ -28,5 +29,6 @@
         <mapper class="com.hly.dao.DepartmentMapper"></mapper>
         <mapper class="com.hly.dao.EmployeeConditionMapper"></mapper>
         <mapper class="com.hly.dao.CacheMapper"></mapper>
+        <mapper class="com.hly.dao.EhcacheMapper"></mapper>
     </mappers>
 </configuration>
